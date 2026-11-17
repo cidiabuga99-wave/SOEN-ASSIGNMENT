@@ -1,0 +1,337 @@
+# ========================================================================
+# SOEN 105 - TASK 2
+# Inventory and Stock management System
+# ========================================================================
+
+# This list will hold the inventory items
+products = []
+
+# ------------------------------------------------------------------------
+# FUNCTION 1: Ask for a  valid number from user
+# Price and quanity cannot be negative
+# -----------------------------------------------------------------------
+def get_valid_number(prompt):
+    while True:
+        try:
+            number = float(input(prompt))
+            if number < 0:
+                print('Invalid! Number cannot be negative. Please try again.')
+            else:
+                return number
+        except ValueError:
+            print('Invalid input! Please enter a number, not text.')
+
+#------------------------------------------------------------------------
+# FUNCTION 2: Calculate stock value
+# Stock Value = Unit Price * Quantity
+# -----------------------------------------------------------------------
+def calculate_stock_value(price, quantity):
+    stock_value = price * quantity
+    return stock_value
+
+#------------------------------------------------------------------------
+# FUNCTION 3: Register a new product 
+# -----------------------------------------------------------------------
+def register_product():
+    print('\n--- REGISTER NEW PRODUCT ---')
+
+    product_id = input('Enter Product ID: ')
+    name = input('Enter Product Name: ')
+    price = get_valid_number('Enter Unit Price: ')
+    quantity = get_valid_number('Enter Quantity: ')
+
+    # Quantity should be whole number, so change it to int
+    quantity = int(quantity)
+
+    # Make a small record for this product
+    product = {
+        'product_id': product_id,
+        'name': name,
+        'price': price,
+        'quantity': quantity
+    }
+
+    # Add product to the list
+    products.append(product)
+
+    stock_value = calculate_stock_value(price, quantity)
+    print('\nProduct registered successfully!')
+    print(f'Name: {name}, Stock Value: {stock_value:.2f}')
+
+#---------------------------------------------------------------------------
+# FUNCTION 4: Display All Products
+# --------------------------------------------------------------------------
+def display_all_products():
+    print('\n--- ALL PRODUCTS ---')
+
+    if len(products) == 0:
+        print('No products registered yet.')
+        return
+
+    print('ID\t\tName\t\tPrice\tQty\tStock Value')
+    print('-----------------------------------------------------------------')
+
+    for product in products:
+        stock_value = calculate_stock_value(product['price'], product['quantity'])
+        print(f'{product['product_id']}\t\t{product['name']}\t\t{product['price']}\t{product['quantity']}\t{stock_value:.2f}')
+
+#-----------------------------------------------------------
+# FUNCTION 5: Update Stock Information
+# 1 = Add stock (new products received)
+# 2 = Sell stock (products sold)
+#-----------------------------------------------------------
+def update_stock():
+    print("\n--- UPDATE STOCK ---")
+
+    if len(products) == 0:
+        print("No products registered yet.")
+        return
+
+    search_id = input("Enter Product ID to update: ")
+
+    # Find the product first using Linear Search
+    found_product = None
+    for product in products:
+        if product["product_id"] == search_id:
+            found_product = product
+            break
+
+    if found_product == None:
+        print("Product not found! Check the Product ID.")
+        return
+
+    print(f"\nProduct: {found_product['name']}, Current Quantity: {found_product['quantity']}")
+    print("1. Add Stock (Receive)")
+    print("2. Sell Stock (Sell)")
+
+    choice = input("Select Option (1-2): ")
+
+    if choice == "1":
+        amount = int(get_valid_number("Enter quantity to add: "))
+        found_product["quantity"] = found_product["quantity"] + amount
+        print(f"Stock updated! New Balance: {found_product['quantity']}")
+
+    elif choice == "2":
+        amount = int(get_valid_number("Enter quantity to sell: "))
+        # Prevent selling more than available stock
+        if amount > found_product["quantity"]:
+            print("Error! Cannot sell more than available stock.")
+            print(f"Available stock is only: {found_product['quantity']}")
+        else:
+            found_product["quantity"] = found_product["quantity"] - amount
+            print(f"Stock updated! New Balance: {found_product['quantity']}")
+    else:
+        print("Invalid choice! Please enter 1 or 2.")
+
+# ----------------------------------------------------------
+# FUNCTION 6: Search Product using LINEAR SEARCH
+# Check one by one from first to last
+# ----------------------------------------------------------
+def linear_search():
+    print("\n--- SEARCH PRODUCT (LINEAR SEARCH) ---")
+
+    if len(products) == 0:
+        print("No products registered yet.")
+        return
+
+    search_id = input("Enter Product ID to search: ")
+
+    found = False
+    for product in products:
+        if product["product_id"] == search_id:
+            stock_value = calculate_stock_value(product["price"], product["quantity"])
+            print("\nProduct Found!")
+            print(f"Product ID: {product['product_id']}")
+            print(f"Name: {product['name']}")
+            print(f"Unit Price: {product['price']}")
+            print(f"Quantity: {product['quantity']}")
+            print(f"Stock Value: {stock_value:.2f}")
+            found = True
+            break
+
+    if found == False:
+        print("Product not found! Check the Product ID.")
+
+# ----------------------------------------------------------
+# FUNCTION 7: Bubble Sort - Sort by Product ID
+# Compare neighbours and swap them if they are in wrong order
+# ----------------------------------------------------------
+def bubble_sort():
+    n = len(products)
+
+    # Outer loop
+    for i in range(n - 1):
+        # Inner loop
+        for j in range(n - 1 - i):
+            if products[j]["product_id"] > products[j + 1]["product_id"]:
+                # Swap the two products
+                temp = products[j]
+                products[j] = products[j + 1]
+                products[j + 1] = temp
+
+# ----------------------------------------------------------
+# FUNCTION 8: Sort Products and Display
+# ----------------------------------------------------------
+def sort_products():
+    print("\n--- SORT PRODUCTS (BUBBLE SORT) ---")
+
+    if len(products) == 0:
+        print("No products registered yet.")
+        return
+
+    bubble_sort()
+    print("Products sorted by Product ID in ascending order!")
+    display_all_products()
+
+# ----------------------------------------------------------
+# FUNCTION 9: Search Product using BINARY SEARCH
+# Binary Search only works if list is SORTED first
+# ----------------------------------------------------------
+def binary_search():
+    print("\n--- SEARCH PRODUCT (BINARY SEARCH) ---")
+
+    if len(products) == 0:
+        print("No products registered yet.")
+        return
+
+    # Step 1: Sort first using Bubble Sort
+    bubble_sort()
+    print("Products have been sorted first for Binary Search.")
+
+    search_id = input("Enter Product ID to search: ")
+
+    low = 0
+    high = len(products) - 1
+    found = False
+
+    # Step 2: Binary Search - check middle, then go left or right
+    while low <= high:
+        middle = (low + high) // 2
+
+        if products[middle]["product_id"] == search_id:
+            stock_value = calculate_stock_value(products[middle]["price"], products[middle]["quantity"])
+            print("\nProduct Found!")
+            print(f"Product ID: {products[middle]['product_id']}")
+            print(f"Name: {products[middle]['name']}")
+            print(f"Unit Price: {products[middle]['price']}")
+            print(f"Quantity: {products[middle]['quantity']}")
+            print(f"Stock Value: {stock_value:.2f}")
+            found = True
+            break
+        elif products[middle]["product_id"] < search_id:
+            low = middle + 1
+        else:
+            high = middle - 1
+
+    if found == False:
+        print("Product not found! Check the Product ID.")
+
+# ----------------------------------------------------------
+# FUNCTION 10: View Low Stock Products
+# Low Stock = quantity below 10
+# Out of Stock = quantity is 0
+# ----------------------------------------------------------
+def view_low_stock():
+    print("\n--- LOW STOCK PRODUCTS ---")
+
+    if len(products) == 0:
+        print("No products registered yet.")
+        return
+
+    found_low = False
+    for product in products:
+        if product["quantity"] < 10:
+            if product["quantity"] == 0:
+                print(f"OUT OF STOCK: {product['product_id']} - {product['name']}, Quantity: 0 - NEEDS RESTOCKING!")
+            else:
+                print(f"LOW STOCK WARNING: {product['product_id']} - {product['name']}, Quantity: {product['quantity']} - NEEDS RESTOCKING!")
+            found_low = True
+
+    if found_low == False:
+        print("All products have enough stock. No low stock products.")
+
+# ----------------------------------------------------------
+# FUNCTION 11: Generate Inventory Summary Report
+# ----------------------------------------------------------
+def generate_report():
+    print("\n--- INVENTORY SUMMARY REPORT ---")
+
+    if len(products) == 0:
+        print("No products registered yet.")
+        return
+
+    total_products = len(products)
+    total_units = 0
+    total_value = 0
+    low_stock_count = 0
+    out_of_stock_count = 0
+
+    highest_value = calculate_stock_value(products[0]["price"], products[0]["quantity"])
+    highest_product = products[0]["name"]
+
+    for product in products:
+        stock_value = calculate_stock_value(product["price"], product["quantity"])
+        total_units = total_units + product["quantity"]
+        total_value = total_value + stock_value
+
+        if product["quantity"] == 0:
+            out_of_stock_count = out_of_stock_count + 1
+        elif product["quantity"] < 10:
+            low_stock_count = low_stock_count + 1
+
+        if stock_value > highest_value:
+            highest_value = stock_value
+            highest_product = product["name"]
+
+    print(f"Total Number of Registered Products: {total_products}")
+    print(f"Total Number of Units Available in Stock: {total_units}")
+    print(f"Total Value of Inventory: {total_value:.2f}")
+    print(f"Number of Products with Low Stock: {low_stock_count}")
+    print(f"Number of Products that are Out of Stock: {out_of_stock_count}")
+    print(f"Product with Highest Stock Value: {highest_product} ({highest_value:.2f})")
+
+# ----------------------------------------------------------
+# FUNCTION 12: Main Menu - Controls the whole program
+# ----------------------------------------------------------
+def main():
+    while True:
+        print("\n==========================================")
+        print("INVENTORY MANAGEMENT SYSTEM")
+        print("==========================================")
+        print("1. Register New Product")
+        print("2. Display All Products")
+        print("3. Update Stock")
+        print("4. Search Product (Linear Search)")
+        print("5. Search Product (Binary Search)")
+        print("6. Sort Products (Bubble Sort)")
+        print("7. View Low Stock Products")
+        print("8. Generate Inventory Report")
+        print("9. Exit")
+        print("==========================================")
+
+        choice = input("Select Option (1-9): ")
+
+        if choice == "1":
+            register_product()
+        elif choice == "2":
+            display_all_products()
+        elif choice == "3":
+            update_stock()
+        elif choice == "4":
+            linear_search()
+        elif choice == "5":
+            binary_search()
+        elif choice == "6":
+            sort_products()
+        elif choice == "7":
+            view_low_stock()
+        elif choice == "8":
+            generate_report()
+        elif choice == "9":
+            print("Thank you! Exiting program...")
+            break
+        else:
+            print("Invalid choice! Please enter 1 to 9.")
+
+# This line starts the program
+main()
