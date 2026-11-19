@@ -1,6 +1,15 @@
+# ====================================================================
+# SOEN 105 - TASK 1
+# Student Academic Performance Management System 
+# ===================================================================
+
+# This list will store all students
+students = []
+
+# -------------------------------------------------------------------
 # FUNCTION 1: Get a valid mark from user
 # Marks must be between 0 and 100
-
+# -------------------------------------------------------------------
 def get_valid_mark(prompt):
     while True:
         try:
@@ -12,15 +21,17 @@ def get_valid_mark(prompt):
         except ValueError:
             print('Invalid! Please enter a number, not text.')
 
+# -------------------------------------------------------------------
 # FUNCTION 2: Calculate total marks using weighting
 # CAT 1 = 15%, CAT 2 = 15%, Exam = 70%
-
+# -------------------------------------------------------------------
 def calculate_total(cat1, cat2, exam ):
     total = (cat1 * 0.15) + (cat2 * 0.15) + (exam * 0.70)
     return total
 
+# -------------------------------------------------------------------
 # FUNCTION 3: Assign grad eusing if, elif,else statements
-
+# -------------------------------------------------------------------
 def get_grade(total):
     if total >= 70:
         return 'A'
@@ -33,17 +44,19 @@ def get_grade(total):
     else:
         return 'E'
 
+# -------------------------------------------------------------------
 # FUNCTION 4 : Determine pass or fail
 # Pass mark is 40 and above
-
+# -------------------------------------------------------------------
 def get_status(total):
     if total >= 40:
         return 'Pass'
     else: 
         return 'Fail'
-        
-# FUNCTION 5: Register a student
 
+# -------------------------------------------------------------------        
+# FUNCTION 5: Register a student
+# -------------------------------------------------------------------
 def register_student(): 
     print('\n--- REGISTER STUDENT ---')
 
@@ -78,23 +91,26 @@ def register_student():
     print('\nStudent registered successfully!')
     print(f'Registration Number: {reg_no}, Name: {name}, Total Marks: {total:.2f}, Grade: {grade}, Status: {status}')
 
+# -------------------------------------------------------------------
 #FUNCTION 6: Display all students
 # Uses a for loop
-
+# -------------------------------------------------------------------
 def display_all_students():
     print('\n---ALL STUDENTS---')
 
     if len(students) == 0:
         print('No student registered yet.')
         return
-    print('Reg No\t\tName\t\tCAT 1\tCAT 2\tExam\tTotal\tGrade\tStatus')
+    print('Reg No\t\tName\tCAT 1\tCAT 2\tExam\tTotal\tGrade\tStatus')
     print('-----------------------------------------------------------------')
 
     for student in students:
-        print(f"{student['reg_no']}\t\t{student['name']}\t\t{student['cat1']}\t{student['cat2']}\t{student['exam']}\t{student['total']:.2f}\t{student['grade']}\t{student['status']}")
+        print(f"{student['reg_no']}\t\t{student['name']}\t{student['cat1']}\t{student['cat2']}\t{student['exam']}\t{student['total']:.2f}\t{student['grade']}\t{student['status']}")
 
+# -------------------------------------------------------------------
 # FUNCTION 7: Search student using LINEAR SEARCH
 # Check one by one from first to last
+# -------------------------------------------------------------------
 def search_student():
     print('\n---SEARCH STUDENT---')
 
@@ -112,7 +128,7 @@ def search_student():
             print(f"Registration Number: {student['reg_no']}")
             print(f"Name: {student['name']}")
             print(f"CAT 1: {student['cat1']}")
-            print(f"CAT 2: {tudent['cat2']}")
+            print(f"CAT 2: {student['cat2']}")
             print(f"Exam: {student['exam']}")
             print(f"Total Marks: {student['total']:.2f}")
             print(f"Grade: {student['grade']}")
@@ -122,8 +138,9 @@ def search_student():
     if found == False:
         print('Student not found! Check the Registration Number.')
 
-
+# -------------------------------------------------------------------
 # FUNCTION 8: Generate Class Performance Report
+# -------------------------------------------------------------------
 def generate_report():
     print('\n---CLASS PERFORMANCE REPORT---')
 
@@ -162,8 +179,10 @@ def generate_report():
     print(f'Highest Score: {highest:.2f}')
     print(f'Lowest Score: {lowest:.2f}')
 
+# -------------------------------------------------------------------
 # FUNCTION 9: Main Menu - Controls the whole program
 # Uses a while loop
+# -------------------------------------------------------------------
 def main():
     while True:
         print('\n======================================')
